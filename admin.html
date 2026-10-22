@@ -12,11 +12,11 @@
 --bg:#f7f3e8;--card:#fffdf6;--ink:#000;--mute:#111;--head:#000;--green:#2f6b3a;--green2:#1f4d29;--gold:#c8962e;--line:#e3dcc6}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--head:#8fd09b;--bg:#141a12;--card:#1d2619;--ink:#eef2e6;--mute:#a3ad98;--green:#5fae6d;--green2:#8fd09b;--gold:#e0b04e;--line:#2f3a2a}}
 :root[data-theme="dark"]{--head:#8fd09b;--bg:#141a12;--card:#1d2619;--ink:#eef2e6;--mute:#a3ad98;--green:#5fae6d;--green2:#8fd09b;--gold:#e0b04e;--line:#2f3a2a}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);font-size:var(--fs,16px)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Amiri,Tahoma,Arial,serif;line-height:1.85;font-size:16px;-webkit-font-smoothing:antialiased}
-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:#1f4d29;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 16px}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#1f4d29;z-index:10}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Amiri,Tahoma,Arial,serif;line-height:1.85;font-size:1rem;-webkit-font-smoothing:antialiased}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--hdr,#1f4d29);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 16px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--hdr,#1f4d29);z-index:10}
 header h1{font-family:Amiri,serif;font-weight:400;font-size:1.7rem;line-height:1.2;margin:0;color:#f3d98b;letter-spacing:0}
 header h1 .lf{font-size:1.4rem}
 .cartbtn{background:var(--gold);color:#1f2a1c;border:0;border-radius:20px;padding:6px 14px;font:inherit;font-weight:700;cursor:pointer}
@@ -83,6 +83,40 @@ details p,details li{color:var(--ink);margin:6px 0}
 .toast:empty{display:none}
 .hbtns{display:flex;gap:8px;align-items:center}
 .hbtns a{text-decoration:none}
+.tbw{overflow-x:auto}
+.tb{width:100%;border-collapse:collapse;margin:8px 0;min-width:360px}
+.tb th{text-align:start;font-size:.85rem;color:var(--mute);padding:4px;font-weight:700}
+.tb td{padding:4px;vertical-align:middle}
+.tb select,.tb input{width:100%;padding:7px}
+.tb tr.bad td{background:rgba(192,57,43,.18)}
+.tb .tab{padding:4px 10px}
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin:8px 0}
+.cl{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.cl input[type=color]{width:46px;height:30px;padding:0;border:0;background:none;cursor:pointer}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+input[type=range]{padding:0}
+.hint{color:var(--mute);font-size:.9rem;margin:6px 0}
+main{max-width:1250px}
+.tabs .tab{font-size:1.1rem;padding:6px 20px}
+input[type=checkbox]{width:auto;transform:scale(1.3)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.stat b{display:block;font-size:1.8rem;line-height:1.3}
+.up{color:#2e7d32;font-weight:700}.dn{color:#c0392b;font-weight:700}
+pre{direction:ltr;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;overflow-x:auto;font-size:.8rem;line-height:1.5;white-space:pre;margin:6px 0}
+.pt{min-width:1000px}
+.pt td{vertical-align:top}
+.pt textarea{min-width:170px;resize:vertical}
+.pt .pn,.pt .pc{min-width:130px}
+.th{width:64px;height:64px;object-fit:cover;border-radius:8px;display:block}
+.th[hidden]{display:none}
+.fbtn{display:inline-block;margin:6px 0 0;cursor:pointer;font-size:.85rem;padding:2px 10px}
+.szc{min-width:240px}
+.sz{display:grid;grid-template-columns:1fr 92px 34px;gap:4px;margin-bottom:4px;align-items:center}
+.sz.bad{outline:2px solid #c0392b;border-radius:8px}
+.pt tr.dirty td{background:rgba(200,150,46,.12)}
+.pt tr.bad td{background:rgba(192,57,43,.18)}
+.pt .pcs{min-width:130px}.pt .pcc{min-width:140px}
 </style>
 </head>
 <body>
@@ -91,18 +125,80 @@ details p,details li{color:var(--ink);margin:6px 0}
 <main id="app"><p>جاري التحميل...</p></main>
 <div class="toast" id="am"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script type="text/plain" id="sql-src">
+create table if not exists public.visits(
+  id bigint generated always as identity primary key,
+  day date not null default current_date,
+  vid text not null,
+  created_at timestamptz not null default now(),
+  unique(day, vid)
+);
+alter table public.visits enable row level security;
+drop policy if exists "visits insert" on public.visits;
+create policy "visits insert" on public.visits
+  for insert to anon, authenticated
+  with check (length(vid) between 8 and 64);
+
+create or replace function public.visits_daily(d int default 90)
+returns table(day date, n bigint)
+language sql security definer set search_path = public as $$
+  select v.day, count(*)::bigint
+  from public.visits v
+  where v.day >= current_date - d
+    and exists (select 1 from public.admins a where a.user_id = auth.uid())
+  group by v.day order by v.day
+$$;
+revoke all on function public.visits_daily(int) from public;
+grant execute on function public.visits_daily(int) to authenticated;
+</script>
+<script type="text/plain" id="snip-src">
+// ألصقه في index.html بعد إنشاء عميل Supabase (sb)
+(async function(){try{
+ var a=await sb.from("settings").select("value").eq("key","app").maybeSingle();
+ if(a.data&&a.data.value&&a.data.value.track===false)return;
+ var t=new Date().toISOString().slice(0,10);
+ if(localStorage.getItem("v_day")===t)return;
+ var id=localStorage.getItem("v_id");
+ if(!id){id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():String(Math.random()).slice(2)+Date.now();localStorage.setItem("v_id",id)}
+ var r=await sb.from("visits").insert({vid:id});
+ if(!r.error||r.error.code==="23505")localStorage.setItem("v_day",t);
+}catch(e){}})();
+</script>
 <script>
 var SB_URL="https://rqgrbhwpxfdpfzjumrpw.supabase.co";
 var SB_KEY="sb_publishable_MaSer_Qf6JzslYcZwrh1AQ_blJsE9iB"; // مفتاح عام، آمن في الواجهة
 var BUCKET="product-images";
-var sb=null,SOC={},PRODUCTS=[],pend="",pendBlob=null,tm=null;
+var sb=null,SOC={},APP={track:true},PRODUCTS=[],STY=null,tm=null,TAB="products",VD=null,VRANGE=30,CF="الكل",PACKS_A=null,PKDIRTY=false;
 try{sb=supabase.createClient(SB_URL,SB_KEY)}catch(e){}
+var TABS=[["products","المنتجات"],["packs","الباقات"],["visits","الزوار والإحصاءات"],["accounts","الحسابات"],["settings","الإعدادات"]];
 
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function mapRow(r){return{id:r.id,n:r.name,c:r.category,d:r.description||"",i:r.info||"",o:r.options,img:r.img_url||""}}
 function msg(t,bad){var m=$("am");m.style.color=bad?"#c0392b":"var(--ink)";m.textContent=t;clearTimeout(tm);if(t)tm=setTimeout(function(){m.textContent=""},7000)}
 
+// ===== الكتل المتاحة =====
+var WEIGHTS=[["100 G",100],["250 G",250],["375 G",375],["500 G",500],["750 G",750],["1 KG",1000],["1.4 KG",1400],["2 KG",2000]];
+var DEF_STY={fs:16,bg:"#f7f3e8",card:"#fffdf6",ink:"#000000",head:"#000000",green:"#2f6b3a",gold:"#c8962e",hdr:"#1f4d29"};
+function wg(s){var m=String(s==null?"":s).toLowerCase().replace(",",".").replace(/\s+/g,"").match(/^(\d+(?:\.\d+)?)(kg|kgs|g|gr|gram|كغ|كلغ|كيلو|غ|غرام)?$/);
+ if(!m)return 0;var n=parseFloat(m[1]),u=m[2]||"",k=/^(kg|kgs|كغ|كلغ|كيلو)$/.test(u);
+ return Math.round(k?n*1000:(u?n:(n<=5?n*1000:n)))}
+function wlabel(g){for(var i=0;i<WEIGHTS.length;i++)if(WEIGHTS[i][1]===g)return WEIGHTS[i][0];return""}
+function wsel(cur,cls){var c=String(cur==null?"":cur).trim(),lab=wlabel(wg(c)),h='<select class="'+cls+'"><option value="">الكتلة</option>';
+ WEIGHTS.forEach(function(w){h+='<option value="'+w[0]+'"'+(lab===w[0]?' selected':'')+'>'+w[0]+'</option>'});
+ if(c&&!lab)h+='<option value="'+esc(c)+'" selected>'+esc(c)+'</option>';
+ return h+'</select>'}
+function wsort(a,b){return (wg(a[0])||1e9)-(wg(b[0])||1e9)}
+
+// ===== الخط والألوان =====
+function okc(c){return /^#[0-9a-f]{6}$/i.test(c||"")}
+function applyStyle(s){var d=document.documentElement.style,map={bg:"--bg",card:"--card",ink:"--ink",head:"--head",green:"--green",gold:"--gold",hdr:"--hdr"};
+ for(var k in map){if(s&&okc(s[k]))d.setProperty(map[k],s[k]);else d.removeProperty(map[k])}
+ var f=s&&+s.fs;if(f>=12&&f<=26)d.setProperty("--fs",f+"px");else d.removeProperty("--fs")}
+function readStyle(){return{fs:+$("sfs").value,bg:$("sbg").value,card:$("scd").value,ink:$("sin").value,head:$("shd").value,green:$("sgr").value,gold:$("sgo").value,hdr:$("shr").value}}
+
+// ===== تحميل البيانات =====
 async function isAdmin(){
  try{var s=await sb.auth.getSession(),u=s.data&&s.data.session&&s.data.session.user;
   if(!u)return false;
@@ -110,6 +206,8 @@ async function isAdmin(){
   return !!(r.data)}catch(e){return false}}
 async function loadProducts(){var r=await sb.from("products").select("*").order("id");if(r.error)throw r.error;PRODUCTS=(r.data||[]).map(mapRow)}
 async function loadSocial(){try{var r=await sb.from("settings").select("value").eq("key","social").maybeSingle();if(r.data&&r.data.value)SOC=r.data.value}catch(e){}}
+async function loadStyle(){try{var r=await sb.from("settings").select("value").eq("key","style").maybeSingle();STY=(r.data&&r.data.value)||null;applyStyle(STY)}catch(e){}}
+async function loadApp(){try{var r=await sb.from("settings").select("value").eq("key","app").maybeSingle();if(r.data&&r.data.value)APP=Object.assign({track:true},r.data.value)}catch(e){}}
 
 function loginRender(){
  $("lo").classList.add("hid");
@@ -127,64 +225,298 @@ async function doLogin(){
  }catch(x){msg("تعذر الاتصال: "+((x&&x.message)||x),1)}}
 
 async function enter(){
- try{await Promise.all([loadProducts(),loadSocial()])}catch(x){msg("تعذر تحميل البيانات: "+((x&&x.message)||x),1)}
- $("lo").classList.remove("hid");render(null)}
+ try{await Promise.all([loadProducts(),loadSocial(),loadStyle(),loadApp(),loadPacks()])}catch(x){msg("تعذر تحميل البيانات: "+((x&&x.message)||x),1)}
+ $("lo").classList.remove("hid");TAB="products";render()}
 
-function render(eid){
- var f=eid==null?{}:(PRODUCTS.filter(function(x){return x.id==eid})[0]||{});pend=f.img||"";pendBlob=null;
- var list=PRODUCTS.length?PRODUCTS.map(function(p){return '<div class="item"><span>'+esc(p.n)+'</span><span><button class="tab" data-ed="'+p.id+'">تعديل</button> <button class="tab" data-del="'+p.id+'">حذف</button></span></div>'}).join(""):'<p style="color:var(--mute)">لا توجد منتجات بعد. أضف أول منتج من النموذج.</p>';
- var h='<div class="cols"><div class="ac"><h2 class="sec" style="margin-top:0">إدارة المنتجات</h2>'+list+'</div>'+
- '<div class="ac" id="fcard"><h2 class="sec" style="margin-top:0">'+(eid==null?'منتج جديد':'تعديل المنتج')+'</h2><label>الاسم</label><input id="fn" value="'+esc(f.n)+'"><label>الفئة (مثل: أعشاب، زهور، توابل)</label><input id="fc" value="'+esc(f.c||"أعشاب")+'"><label>وصف المنتج</label><textarea id="fd" rows="3">'+esc(f.d)+'</textarea><label>معلومات إضافية (كل معلومة في سطر)</label><textarea id="fi" rows="3">'+esc(f.i)+'</textarea><label>الأحجام والأسعار (سطر لكل حجم، مثال: 100 G=25)</label><textarea id="fo" rows="3">'+esc((f.o||[["100 G",20]]).map(function(o){return o[0]+"="+o[1]}).join("\n"))+'</textarea><label>صورة المنتج</label><input type="file" id="ff" accept="image/*"><img id="fp" class="big" '+(f.img?'src="'+esc(f.img)+'"':'hidden')+'>'+
- '<button class="btn" data-sv="'+(eid==null?'':eid)+'" style="width:100%">حفظ المنتج</button>'+(eid!=null?'<button class="tab" data-new="1" style="width:100%;margin-top:8px">إلغاء التعديل / منتج جديد</button>':'')+'</div></div>'+
- '<div class="ac" style="margin-top:14px"><h2 class="sec" style="margin-top:0">روابط الحسابات</h2><label>فيسبوك</label><input id="sfb" dir="ltr" placeholder="https://" value="'+esc(SOC.fb)+'"><label>إنستغرام</label><input id="sig" dir="ltr" placeholder="https://" value="'+esc(SOC.ig)+'"><label>تيك توك</label><input id="stt" dir="ltr" placeholder="https://" value="'+esc(SOC.tt)+'"><button class="btn" data-ss="1" style="width:100%;margin-top:8px">حفظ الروابط</button><p style="color:var(--mute);margin-bottom:0">التغييرات تُحفظ مباشرة وتظهر للزبائن فوراً.</p></div>';
- $("app").innerHTML=h;
- if(eid!=null)$("fcard").scrollIntoView({behavior:"smooth",block:"start"})}
+// ===== الهيكل: البوابات =====
+function render(){PKDIRTY=false;
+ $("app").innerHTML='<div class="tabs">'+TABS.map(function(t){return '<button class="tab'+(TAB===t[0]?' on':'')+'" data-tab="'+t[0]+'">'+t[1]+'</button>'}).join("")+'</div><div id="tc"></div>';
+ ({products:rProducts,packs:rPacks,visits:rVisits,accounts:rAccounts,settings:rSettings})[TAB]()}
+function dirtyCount(){return document.querySelectorAll("#pt tr[data-dirty]").length}
 
-document.addEventListener("click",async function(e){
- var t=e.target.closest&&e.target.closest("button");if(!t)return;
- if(t.dataset.login){doLogin();return}
- if(t.dataset.lo){await sb.auth.signOut();PRODUCTS=[];loginRender();return}
- if(t.dataset.ed){render(+t.dataset.ed);return}
- if(t.dataset.new){render(null);return}
- if(t.dataset.del){
-  if(t.dataset.arm!=="1"){t.dataset.arm="1";t.textContent="تأكيد الحذف";return}
-  try{var r=await sb.from("products").delete().eq("id",+t.dataset.del).select();
-   if(r.error)throw r.error;
-   if(!r.data||!r.data.length)throw new Error("لا تملك صلاحية الحذف");
-   await loadProducts();render(null);msg("تم الحذف.")
-  }catch(x){msg("تعذر الحذف: "+((x&&x.message)||x),1)}
-  return}
- if(t.dataset.sv!==undefined){
-  var n=$("fn").value.trim(),os=$("fo").value.split("\n").map(function(l){var a=l.split("=");return[(a[0]||"").trim(),parseFloat(a[1])]}).filter(function(a){return a[0]});
-  if(!n||!os.length||os.some(function(a){return !(a[1]>0)})){msg("أدخل الاسم وحجماً واحداً على الأقل بصيغة «100 G=25».",1);return}
-  t.disabled=true;msg("جاري الحفظ...");
+// ===== بوابة المنتجات =====
+var BASE_CATS=["أعشاب","توابل","زهور","مشروبات","نساء","قوة","شتاء"];
+function cats(){var a=BASE_CATS.slice();PRODUCTS.forEach(function(p){if(p.c&&a.indexOf(p.c)<0)a.push(p.c)});return a}
+function psorted(){var L=cats();return PRODUCTS.slice().sort(function(a,b){var x=L.indexOf(a.c),y=L.indexOf(b.c);x=x<0?99:x;y=y<0?99:y;return x-y||a.id-b.id})}
+function catCell(c){c=c||"أعشاب";var L=cats(),inL=L.indexOf(c)>-1;
+ return '<select class="pcs">'+L.map(function(x){return '<option'+(x===c?' selected':'')+'>'+esc(x)+'</option>'}).join("")+'<option value="__o"'+(inL?'':' selected')+'>أخرى...</option></select><input class="pc" placeholder="اكتب الفئة" value="'+esc(c)+'"'+(inL?' hidden':'')+'>'}
+function syncCat(tr){var sl=tr.querySelector(".pcs"),i=tr.querySelector(".pc"),v=i.value.trim(),has=false;
+ for(var k=0;k<sl.options.length;k++)if(v&&sl.options[k].value===v)has=true;
+ if(has){sl.value=v;i.hidden=true}else{sl.value="__o";i.hidden=false}}
+function drawCF(){var el=$("cf");if(!el)return;var rows=[].slice.call(document.querySelectorAll("#pt tr")),m={},ord=[];
+ rows.forEach(function(tr){var c=tr.querySelector(".pc").value.trim()||"أعشاب";if(!m[c]){m[c]=0;ord.push(c)}m[c]++});
+ if(CF!=="الكل"&&!m[CF])CF="الكل";
+ el.innerHTML=["الكل"].concat(ord).map(function(c){var n=c==="الكل"?rows.length:m[c];return '<button type="button" class="tab'+(CF===c?' on':'')+'" data-cf="'+esc(c)+'">'+esc(c)+' ('+n+')</button>'}).join("")}
+function applyCF(){document.querySelectorAll("#pt tr").forEach(function(tr){var c=tr.querySelector(".pc").value.trim()||"أعشاب";tr.classList.toggle("hid",CF!=="الكل"&&c!==CF)})}
+function srow(w,pr,bad){return '<div class="sz'+(bad?' bad':'')+'">'+wsel(w,"ow")+'<input type="number" class="op" min="0" step="0.01" inputmode="decimal" placeholder="الثمن" value="'+esc(pr)+'"><button type="button" class="tab" data-rmsz="1" title="حذف">✕</button></div>'}
+function prow(p){p=p||{};var o=p.o&&p.o.length?p.o:[["",""]];
+ return '<tr'+(p.id?' data-id="'+p.id+'"':'')+' data-img="'+esc(p.img||"")+'"><td><img class="th" alt="" '+(p.img?'src="'+esc(p.img)+'"':'hidden')+'><label class="tab fbtn">صورة<input type="file" class="pf" accept="image/*" hidden></label></td>'+
+ '<td><input class="pn" placeholder="اسم المنتج" value="'+esc(p.n)+'"></td>'+
+ '<td class="pcc">'+catCell(p.c)+'</td>'+
+ '<td><textarea class="pd" rows="3">'+esc(p.d)+'</textarea></td>'+
+ '<td><textarea class="pi" rows="3">'+esc(p.i)+'</textarea></td>'+
+ '<td class="szc">'+o.map(function(x){return srow(x[0],x[1])}).join("")+'<button type="button" class="tab" data-addsz="1">+ كتلة</button></td>'+
+ '<td><button type="button" class="tab" data-pdel="1">حذف</button></td></tr>'}
+function rProducts(){
+ $("tc").innerHTML='<div class="ac"><h2 class="sec" style="margin-top:0">المنتجات</h2>'+
+ '<p class="hint">استيراد من Excel بأعمدة: اسم المنتج | الوصف | معلومات | الثمن | الكتلة | الفئة (يكفي الاسم والثمن والكتلة). المنتج الذي يتكرر في عدة صفوف تُجمع كتله وأثمانه. تُضاف النتيجة إلى الجدول للمراجعة، ثم اضغط «حفظ التغييرات».</p>'+
+ '<div class="bar"><input type="file" id="xf" accept=".xlsx,.xls,.csv" style="flex:1;min-width:200px"><button type="button" class="tab" data-xtpl="1">تحميل نموذج Excel</button></div>'+
+ '<div class="tabs" id="cf"></div><div class="tbw"><table class="tb pt"><thead><tr><th>الصورة</th><th>الاسم</th><th>الفئة</th><th>الوصف</th><th>معلومات (سطر لكل معلومة)</th><th>الكتل والأثمان</th><th></th></tr></thead><tbody id="pt">'+psorted().map(prow).join("")+'</tbody></table></div>'+
+ (PRODUCTS.length?'':'<p class="hint">لا توجد منتجات بعد. أضف أول منتج بالزر أدناه.</p>')+
+ '<div class="bar"><button type="button" class="tab" data-addp="1">+ إضافة منتج</button><button class="btn" data-psave="1" id="psv" style="margin-inline-start:auto">حفظ التغييرات</button></div></div>';drawCF();applyCF()}
+function mark(tr){if(!tr)return;tr.dataset.dirty="1";tr.classList.add("dirty");var n=dirtyCount(),b=$("psv");if(b)b.textContent="حفظ التغييرات"+(n?" ("+n+")":"")}
+function readSizes(tr){var os=[],bad=false,seen={};
+ tr.querySelectorAll(".sz").forEach(function(d){d.classList.remove("bad");
+  var w=d.querySelector(".ow").value,pv=d.querySelector(".op").value,p=parseFloat(String(pv).replace(",","."));
+  if(!w&&!pv)return;if(!w||!(p>0)||seen[w]){bad=true;d.classList.add("bad");return}seen[w]=1;os.push([w,p])});
+ os.sort(wsort);return bad?null:os}
+function setSize(tr,lab,pr,bad){
+ var box=tr.querySelector(".szc"),ds=[].slice.call(box.querySelectorAll(".sz")),d=null;
+ if(lab)d=ds.filter(function(x){return x.querySelector(".ow").value===lab})[0];
+ if(!d)d=ds.filter(function(x){return !x.querySelector(".ow").value&&!x.querySelector(".op").value})[0];
+ if(!d){box.querySelector("[data-addsz]").insertAdjacentHTML("beforebegin",srow("",""));var all=box.querySelectorAll(".sz");d=all[all.length-1]}
+ d.querySelector(".ow").value=lab||"";d.querySelector(".op").value=pr;d.classList.toggle("bad",!!bad)}
+function findRow(k){var rows=document.querySelectorAll("#pt tr");for(var i=0;i<rows.length;i++)if(rows[i].querySelector(".pn").value.trim().toLowerCase()===k)return rows[i];return null}
+
+function resizeImg(file,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){
+ var s=Math.min(1,900/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);
+ var cx=c.getContext("2d");cx.fillStyle="#fff";cx.fillRect(0,0,c.width,c.height);cx.drawImage(im,0,0,c.width,c.height);var d=c.toDataURL("image/jpeg",.82);c.toBlob(function(b){cb(d,b)},"image/jpeg",.82)};im.src=r.result};r.readAsDataURL(file)}
+
+function importXl(inp){
+ var f=inp.files[0];if(!f)return;
+ if(typeof XLSX==="undefined"){msg("تعذر تحميل مكتبة Excel.",1);return}
+ var rd=new FileReader();
+ rd.onload=function(){try{
+  var wb=XLSX.read(rd.result,{type:"array"}),a=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:""});
+  if(!a.length)throw new Error("الملف فارغ");
+  var HK=[["d",/وصف|desc/],["i",/معلومات|معلومة|info/],["c",/فئة|categ/],["p",/ثمن|سعر|price/],["w",/كتلة|وزن|حجم|weight|mass|size/],["n",/اسم|منتج|name|product/]],ix={};
+  a[0].forEach(function(c,j){c=String(c).toLowerCase();for(var k=0;k<HK.length;k++)if(HK[k][1].test(c)){if(ix[HK[k][0]]==null)ix[HK[k][0]]=j;break}});
+  var hasH=Object.keys(ix).length>0;
+  if(!hasH)ix=a[0].length<=3?{n:0,p:1,w:2}:{n:0,d:1,i:2,p:3,w:4,c:5};
+  if(ix.n==null)ix.n=0;
+  var g=function(r,k){return ix[k]==null?"":String(r[ix[k]]==null?"":r[ix[k]]).trim()},G={},ord=[],rev=0,cnt=0;
+  a.slice(hasH?1:0).forEach(function(r){
+   var n=g(r,"n");if(!n)return;var k=n.toLowerCase();
+   if(!G[k]){G[k]={n:n,d:"",i:"",c:"",s:[]};ord.push(k)}var o=G[k];
+   if(g(r,"d"))o.d=g(r,"d");if(g(r,"i"))o.i=g(r,"i");if(g(r,"c"))o.c=g(r,"c");
+   var pv=g(r,"p"),wv=g(r,"w");if(!pv&&!wv)return;
+   var p=parseFloat(pv.replace(",",".")),lab=wlabel(wg(wv)),bad=!(p>0)||!lab;
+   o.s.push({w:lab,p:isNaN(p)?"":p,bad:bad});if(bad)rev++});
+  if(!ord.length)throw new Error("لم أجد منتجات صالحة");
+  ord.forEach(function(k){var o=G[k],tr=findRow(k);
+   if(!tr){$("pt").insertAdjacentHTML("beforeend",prow({n:o.n,c:o.c||"أعشاب",d:o.d,i:o.i}));tr=$("pt").lastElementChild}
+   else{if(o.d)tr.querySelector(".pd").value=o.d;if(o.i)tr.querySelector(".pi").value=o.i;if(o.c){tr.querySelector(".pc").value=o.c;syncCat(tr)}}
+   o.s.forEach(function(s){setSize(tr,s.w,s.p,s.bad)});mark(tr);cnt++});
+  drawCF();msg("تم استيراد "+cnt+" منتج إلى الجدول"+(rev?" — "+rev+" كتلة/ثمن مظلل يحتاج مراجعة":"")+". راجع ثم اضغط «حفظ التغييرات».",rev?1:0)
+ }catch(x){msg("تعذر قراءة الملف: "+((x&&x.message)||x),1)}
+ inp.value=""};
+ rd.readAsArrayBuffer(f)}
+
+async function saveProducts(t){
+ var trs=[].slice.call(document.querySelectorAll("#pt tr[data-dirty]")),jobs=[],bad=0;
+ trs.forEach(function(tr){tr.classList.remove("bad");
+  var n=tr.querySelector(".pn").value.trim(),d=tr.querySelector(".pd").value.trim(),inf=tr.querySelector(".pi").value.trim(),os=readSizes(tr);
+  if(!tr.dataset.id&&!n&&!d&&!inf&&os&&!os.length)return;
+  if(!n||!os||!os.length){bad++;tr.classList.add("bad");return}
+  jobs.push({tr:tr,row:{name:n,category:tr.querySelector(".pc").value.trim()||"أعشاب",description:d,info:inf,options:os}})});
+ if(bad){msg("يوجد "+bad+" منتج ناقص (مظلل بالأحمر): الاسم وكتلة واحدة على الأقل بثمن صحيح دون تكرار الكتلة.",1);return}
+ if(!jobs.length){msg("لا توجد تغييرات للحفظ.");return}
+ t.disabled=true;msg("جاري الحفظ...");
+ var done=0,errs=[];
+ for(var j=0;j<jobs.length;j++){var J=jobs[j];
   try{
-   var url=pend||"";
-   if(pendBlob){
-    var path=Date.now()+"-"+Math.random().toString(36).slice(2,7)+".jpg";
-    var up=await sb.storage.from(BUCKET).upload(path,pendBlob,{contentType:"image/jpeg",cacheControl:"31536000"});
-    if(up.error)throw up.error;
-    url=sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
-   }
-   var row={name:n,category:$("fc").value.trim()||"أعشاب",description:$("fd").value.trim(),info:$("fi").value.trim(),options:os,img_url:url||null},res;
-   if(t.dataset.sv)res=await sb.from("products").update(row).eq("id",+t.dataset.sv).select();
+   var url=J.tr.dataset.img||"";
+   if(J.tr._blob){var path=Date.now()+"-"+Math.random().toString(36).slice(2,7)+".jpg";
+    var up=await sb.storage.from(BUCKET).upload(path,J.tr._blob,{contentType:"image/jpeg",cacheControl:"31536000"});
+    if(up.error)throw up.error;url=sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl}
+   var row=Object.assign({img_url:url||null},J.row),res;
+   if(J.tr.dataset.id)res=await sb.from("products").update(row).eq("id",+J.tr.dataset.id).select();
    else res=await sb.from("products").insert(row).select();
    if(res.error)throw res.error;
    if(!res.data||!res.data.length)throw new Error("لم يُحفظ التغيير، تحقق من صلاحيات المشرف");
-   await loadProducts();render(null);window.scrollTo(0,0);msg("تم حفظ «"+n+"» وظهر للزبائن.")
-  }catch(x){t.disabled=false;msg("تعذر الحفظ: "+((x&&x.message)||x),1)}
+   J.tr.dataset.id=res.data[0].id;J.tr.dataset.img=url;J.tr._blob=null;delete J.tr.dataset.dirty;J.tr.classList.remove("dirty");done++
+  }catch(x){errs.push(J.row.name+": "+((x&&x.message)||x));J.tr.classList.add("bad")}}
+ t.disabled=false;
+ try{await loadProducts()}catch(e){}
+ if(errs.length){msg("حُفظ "+done+" وفشل "+errs.length+" — "+errs[0],1);mark(null)}
+ else{rProducts();msg("تم حفظ "+done+" منتج وظهر للزبائن.")}}
+
+// ===== بوابة الباقات =====
+var DEF_PACKS=[
+ {id:"d1",n:"باقة النساء",d:"مجموعة من أعشاب النساء المطلوبة.",img:"",price:null,names:["حب العزيز","بتي كولا","بذور الإكبي","البكبوكة"]},
+ {id:"d2",n:"باقة القوة",d:"مجموعة من أعشاب القوة والنشاط.",img:"",price:null,names:["دميانة","شيلاجيت","أشواغاندا","حبة البركة (الحبة السوداء)","الماكا"]},
+ {id:"d3",n:"باقة الشتاء",d:"أعشاب وتوابل الشتاء والبرد.",img:"",price:null,names:["خدنجال","قرفة سيلانية","زعتر بلدي","فليو","كامون صوفي","ورد بلدي مجفف","قرنفل","خزامة","بضيانة"]}];
+async function loadPacks(){try{var r=await sb.from("settings").select("value").eq("key","packs").maybeSingle(),v=r.data&&r.data.value;
+ PACKS_A=(v&&Array.isArray(v.list))?v.list:JSON.parse(JSON.stringify(DEF_PACKS))}catch(e){PACKS_A=JSON.parse(JSON.stringify(DEF_PACKS))}}
+function pkcard(k){k=k||{};var names=k.names||[],L=cats(),h="";
+ L.forEach(function(c){var ps=PRODUCTS.filter(function(p){return p.c===c});if(!ps.length)return;
+  h+='<p class="hint" style="grid-column:1/-1;margin:4px 0 0;font-weight:700">'+esc(c)+'</p>'+ps.map(function(p){return '<label class="cl"><span>'+esc(p.n)+'</span><input type="checkbox" class="pkc" value="'+esc(p.n)+'"'+(names.indexOf(p.n)>-1?' checked':'')+'></label>'}).join("")});
+ return '<div class="ac pk" data-pid="'+esc(k.id||("p"+Date.now().toString(36)+Math.random().toString(36).slice(2,5)))+'" data-img="'+esc(k.img||"")+'" style="margin-top:14px">'+
+ '<div class="bar" style="align-items:flex-start"><div style="width:140px"><label class="pkbox" style="display:flex;align-items:center;justify-content:center;width:140px;height:140px;margin:0;border:2px dashed var(--green);border-radius:12px;cursor:pointer;overflow:hidden;background:#fff;text-align:center;font-weight:700;color:var(--green)"><img class="pkth" alt="" '+(k.img?'src="'+esc(k.img)+'"':'hidden')+' style="width:100%;height:100%;object-fit:contain"><span class="pkph" style="padding:8px"'+(k.img?' hidden':'')+'>+ اضغط هنا لرفع صورة الباقة</span><input type="file" class="pkf" accept="image/*" hidden></label><p class="hint" style="margin:4px 0 0">اضغط على المربع لتغيير الصورة</p></div>'+
+ '<div style="flex:1;min-width:220px"><label>اسم الباقة</label><input class="pkn" value="'+esc(k.n)+'"><label>الوصف</label><textarea class="pkd" rows="2">'+esc(k.d)+'</textarea>'+
+ '<label>ثمن الباقة بـ DH (اختياري)</label><input class="pkp" type="number" min="0" step="0.01" inputmode="decimal" placeholder="اتركه فارغاً ليُحسب المجموع تلقائياً" value="'+(k.price>0?esc(k.price):'')+'"></div></div>'+
+ '<label>منتجات الباقة</label><div class="cg pkl">'+(h||'<p class="hint">أضف منتجات أولاً من بوابة المنتجات.</p>')+'</div>'+
+ '<div class="bar"><button type="button" class="tab" data-pkdel="1">حذف الباقة</button></div></div>'}
+function rPacks(){
+ $("tc").innerHTML='<div class="ac"><h2 class="sec" style="margin-top:0">الباقات</h2>'+
+ '<p class="hint">لكل باقة: صورة واسم ووصف ومنتجات. إن حددت ثمناً فستُباع الباقة بهذا الثمن كاملاً، وإن تركته فارغاً يُحسب المجموع تلقائياً من أثمان المنتجات (الحجم الأول لكل منتج). الباقة مرتبطة بأسماء المنتجات، فإذا غيّرت اسم منتج أعد تحديده في الباقة.</p>'+
+ '<div id="pkw">'+(PACKS_A||[]).map(pkcard).join("")+'</div>'+
+ '<div class="bar"><button type="button" class="tab" data-addpk="1">+ إضافة باقة</button><button class="btn" data-pksave="1" style="margin-inline-start:auto">حفظ الباقات</button></div></div>'}
+async function savePacks(t){
+ var cards=[].slice.call(document.querySelectorAll("#pkw .pk")),list=[],bad=0;
+ cards.forEach(function(c){c.style.outline="";
+  var n=c.querySelector(".pkn").value.trim(),names=[].slice.call(c.querySelectorAll(".pkc:checked")).map(function(x){return x.value}),pv=c.querySelector(".pkp").value,p=parseFloat(String(pv).replace(",","."));
+  if(!n||!names.length||(pv&&!(p>0))){bad++;c.style.outline="2px solid #c0392b";return}
+  list.push({c:c,o:{id:c.dataset.pid,n:n,d:c.querySelector(".pkd").value.trim(),img:c.dataset.img||"",names:names,price:p>0?p:null}})});
+ if(bad){msg("يوجد "+bad+" باقة ناقصة (مؤطرة بالأحمر): الاسم ومنتج واحد على الأقل، والثمن إن وُجد يجب أن يكون رقماً أكبر من صفر.",1);return}
+ t.disabled=true;msg("جاري الحفظ...");
+ try{
+  for(var i=0;i<list.length;i++){var L=list[i];
+   if(L.c._blob){var path="pack-"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+".jpg";
+    var up=await sb.storage.from(BUCKET).upload(path,L.c._blob,{contentType:"image/jpeg",cacheControl:"31536000"});
+    if(up.error)throw up.error;L.o.img=sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl}}
+  var r=await sb.from("settings").upsert({key:"packs",value:{list:list.map(function(x){return x.o})}});
+  if(r.error)throw r.error;
+  PACKS_A=list.map(function(x){return x.o});PKDIRTY=false;rPacks();msg("تم حفظ الباقات وظهرت للزبائن.")
+ }catch(x){msg("تعذر الحفظ: "+((x&&x.message)||x),1)}
+ t.disabled=false}
+
+// ===== بوابة الزوار =====
+function dstr(off){var d=new Date();d.setUTCDate(d.getUTCDate()-off);return d.toISOString().slice(0,10)}
+function fd(d){return d.slice(8)+"/"+d.slice(5,7)}
+function vsum(a,b){var s=0;for(var i=a;i<=b;i++)s+=VD[dstr(i)]||0;return s}
+function gr(c,p){if(!p)return c>0?'<span class="up">جديد ▲</span>':'<span class="hint">—</span>';var v=Math.round((c-p)/p*100);return '<span dir="ltr" class="'+(v>=0?'up':'dn')+'">'+(v>=0?'▲ +':'▼ ')+v+'%</span>'}
+function chartSvg(ds){
+ var W=700,H=230,L=34,B=26,T=10,R=8,iw=W-L-R,ih=H-B-T,mx=1;ds.forEach(function(x){if(x.n>mx)mx=x.n});
+ var top=Math.max(4,Math.ceil(mx/4)*4),st=iw/ds.length,bw=Math.max(2,st*.68),pts=[],s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="مخطط الزيارات اليومية" style="direction:ltr;display:block">';
+ for(var q=0;q<=4;q++){var v=top/4*q,y=T+ih-ih*v/top;s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'" style="stroke:var(--line)"/><text x="'+(L-5)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" style="fill:var(--mute)">'+v+'</text>'}
+ ds.forEach(function(x,i){var h=ih*x.n/top,cx=L+st*(i+.5),a=0,c=0;
+  s+='<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+(T+ih-h).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" style="fill:var(--green);opacity:.55"><title>'+fd(x.d)+': '+x.n+'</title></rect>';
+  for(var j=Math.max(0,i-6);j<=i;j++){a+=ds[j].n;c++}
+  pts.push(cx.toFixed(1)+","+(T+ih-ih*(a/c)/top).toFixed(1))});
+ s+='<polyline points="'+pts.join(" ")+'" fill="none" stroke-width="2.5" style="stroke:var(--gold)"/>';
+ [0,Math.floor((ds.length-1)/2),ds.length-1].forEach(function(i){var cx=L+st*(i+.5);s+='<text x="'+cx.toFixed(1)+'" y="'+(H-7)+'" text-anchor="'+(i===0?'start':i===ds.length-1?'end':'middle')+'" font-size="11" style="fill:var(--mute)">'+fd(ds[i].d)+'</text>'});
+ return s+'</svg>'}
+function setupHtml(open){
+ return '<details'+(open?' open':'')+' style="margin-top:14px"><summary>إعداد تتبع الزوار (مرة واحدة)</summary>'+
+ '<p>١) في Supabase افتح SQL Editor وشغّل هذا الكود:</p><pre id="sqlp">'+esc($("sql-src").textContent.trim())+'</pre><button type="button" class="tab" data-copy="sqlp">نسخ الكود</button>'+
+ '<p>٢) ثم ألصق هذا الكود في صفحة المتجر index.html:</p><pre id="snp">'+esc($("snip-src").textContent.trim())+'</pre><button type="button" class="tab" data-copy="snp">نسخ الكود</button>'+
+ '<p class="hint">يُحسب كل زائر مرة واحدة في اليوم بمعرّف عشوائي مجهول، دون أي بيانات شخصية. يمكن إيقاف التتبع من بوابة الإعدادات.</p></details>'}
+async function rVisits(){
+ $("tc").innerHTML='<div class="ac"><p>جاري التحميل...</p></div>';
+ var r;try{r=await sb.rpc("visits_daily",{d:365})}catch(x){r={error:x}}
+ if(TAB!=="visits")return;
+ if(r.error||!Array.isArray(r.data)){
+  $("tc").innerHTML='<div class="ac"><h2 class="sec" style="margin-top:0">الزوار والإحصاءات</h2><p>تتبع الزوار غير مفعّل بعد'+(r.error&&r.error.message?' ('+esc(r.error.message)+')':'')+'. نفّذ خطوتي الإعداد أدناه ثم أعد فتح هذه البوابة.</p>'+setupHtml(true)+'</div>';return}
+ VD={};r.data.forEach(function(x){VD[x.day]=+x.n});drawVisits()}
+function drawVisits(){
+ var ds=[];for(var i=VRANGE-1;i>=0;i--){var d=dstr(i);ds.push({d:d,n:VD[d]||0})}
+ var tot=0;for(var k in VD)tot+=VD[k];
+ var t0=vsum(0,0),y0=vsum(1,1),w=vsum(0,6),pw=vsum(7,13),m=vsum(0,29),pm=vsum(30,59);
+ function card(l,v,g){return '<div class="stat"><span class="hint">'+l+'</span><b>'+v+'</b>'+(g||'')+'</div>'}
+ $("tc").innerHTML='<div class="ac"><h2 class="sec" style="margin-top:0">الزوار والإحصاءات</h2>'+
+ '<div class="stats">'+card("اليوم",t0,gr(t0,y0)+' <span class="hint">عن أمس</span>')+card("آخر 7 أيام",w,gr(w,pw)+' <span class="hint">عن الأسبوع السابق</span>')+card("آخر 30 يوماً",m,gr(m,pm)+' <span class="hint">عن الشهر السابق</span>')+card("متوسط يومي (30 يوماً)",(m/30).toFixed(1),'')+card("الإجمالي (آخر سنة)",tot,'')+'</div>'+
+ '<div class="bar" style="margin-top:14px"><span>الفترة:</span>'+[7,30,90].map(function(n){return '<button type="button" class="tab'+(VRANGE===n?' on':'')+'" data-vr="'+n+'">'+n+' يوماً</button>'}).join("")+'<button type="button" class="tab" data-vref="1" style="margin-inline-start:auto">تحديث</button></div>'+
+ chartSvg(ds)+'<p class="hint">الأعمدة: الزوار كل يوم · الخط الذهبي: متوسط متحرك لـ7 أيام يوضح اتجاه التطور.</p>'+setupHtml(false)+'</div>'}
+
+// ===== بوابة الحسابات =====
+function rAccounts(){
+ $("tc").innerHTML='<div class="ac"><h2 class="sec" style="margin-top:0">حسابات التواصل الاجتماعي</h2><label>فيسبوك</label><input id="sfb" dir="ltr" placeholder="https://" value="'+esc(SOC.fb)+'"><label>إنستغرام</label><input id="sig" dir="ltr" placeholder="https://" value="'+esc(SOC.ig)+'"><label>تيك توك</label><input id="stt" dir="ltr" placeholder="https://" value="'+esc(SOC.tt)+'"><button class="btn" data-ss="1" style="width:100%;margin-top:12px">حفظ الروابط</button><p class="hint">التغييرات تُحفظ مباشرة وتظهر للزبائن فوراً. تُقبل فقط روابط تبدأ بـ https://</p></div>'}
+
+// ===== بوابة الإعدادات =====
+async function rSettings(){
+ var SS=Object.assign({},DEF_STY,STY||{}),em="";
+ try{var s=await sb.auth.getSession();em=s.data.session.user.email||""}catch(e){}
+ if(TAB!=="settings")return;
+ function cl(id,lbl,v){return '<label class="cl"><span>'+lbl+'</span><input type="color" id="'+id+'" value="'+v+'" data-sty="1"></label>'}
+ $("tc").innerHTML=
+ '<div class="ac"><h2 class="sec" style="margin-top:0">الخصوصية</h2>'+
+ '<label class="cl" style="margin-bottom:10px"><span>تتبع عدد الزوار (مجهول الهوية)</span><input type="checkbox" id="atrk"'+(APP.track!==false?' checked':'')+'></label>'+
+ '<button class="btn" data-sapp="1" style="width:100%">حفظ إعدادات الخصوصية</button>'+
+ '<h3 style="margin:18px 0 0;font-weight:700">تغيير كلمة المرور</h3><p class="hint" style="margin:0">الحساب الحالي: <span dir="ltr">'+esc(em)+'</span></p>'+
+ '<label>كلمة المرور الجديدة (8 أحرف فأكثر)</label><input id="pw1" type="password" dir="ltr" autocomplete="new-password"><label>تأكيد كلمة المرور</label><input id="pw2" type="password" dir="ltr" autocomplete="new-password"><button class="btn" data-spw="1" style="width:100%;margin-top:12px">تغيير كلمة المرور</button></div>'+
+ '<div class="ac" style="margin-top:14px"><h2 class="sec" style="margin-top:0">الخط والألوان</h2>'+
+ '<label>حجم الخط: <span id="sfv">'+SS.fs+'</span> px</label><input type="range" id="sfs" min="12" max="26" step="1" value="'+SS.fs+'" data-sty="1">'+
+ '<div class="cg">'+cl("sbg","الخلفية",SS.bg)+cl("scd","البطاقات",SS.card)+cl("sin","لون النص",SS.ink)+cl("shd","العناوين",SS.head)+cl("sgr","اللون الرئيسي",SS.green)+cl("sgo","لون الأزرار",SS.gold)+cl("shr","الشريط العلوي",SS.hdr)+'</div>'+
+ '<div class="bar"><button class="btn" data-sts="1" style="flex:1">حفظ المظهر</button><button type="button" class="tab" data-str="1">إعادة الضبط</button></div>'+
+ '<p class="hint">المعاينة فورية هنا، والحفظ يطبّقها على المتجر.</p></div>'}
+
+// ===== الأحداث =====
+document.addEventListener("click",async function(e){
+ var t=e.target.closest&&e.target.closest("button");if(!t)return;var D=t.dataset;
+ if(D.login){doLogin();return}
+ if(D.lo){await sb.auth.signOut();PRODUCTS=[];loginRender();return}
+ if(D.tab){if((dirtyCount()||(TAB==="packs"&&PKDIRTY))&&!confirm("لديك تغييرات غير محفوظة. المتابعة بدون حفظ؟"))return;TAB=D.tab;render();return}
+ if(D.vr){VRANGE=+D.vr;if(VD)drawVisits();return}
+ if(D.vref){rVisits();return}
+ if(D.copy){var pe=$(D.copy);try{await navigator.clipboard.writeText(pe.textContent);msg("تم النسخ.")}catch(x){msg("تعذر النسخ، حدّد النص يدوياً.",1)}return}
+ if(D.cf!=null){CF=D.cf;drawCF();applyCF();return}
+ if(D.addpk){var w0=$("pkw");w0.insertAdjacentHTML("beforeend",pkcard(null));var nc=w0.lastElementChild;nc.querySelector(".pkn").focus();nc.scrollIntoView({block:"center",behavior:"smooth"});PKDIRTY=true;return}
+ if(D.pkdel){if(D.arm!=="1"){D.arm="1";t.textContent="تأكيد الحذف";return}t.closest(".pk").remove();PKDIRTY=true;return}
+ if(D.pksave){await savePacks(t);return}
+ if(D.xtpl){
+  if(typeof XLSX==="undefined"){msg("تعذر تحميل مكتبة Excel.",1);return}
+  var ws=XLSX.utils.aoa_to_sheet([["اسم المنتج","الوصف","معلومات","الثمن","الكتلة","الفئة"],["زعتر بلدي","زعتر مجفف طبيعي","يحفظ في مكان جاف",25,"100 G","أعشاب"],["زعتر بلدي","","",90,"500 G",""],["إكليل الجبل","","",30,"250 G","أعشاب"]]),wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Products");XLSX.writeFile(wb,"products-template.xlsx");return}
+ if(D.addp){$("pt").insertAdjacentHTML("beforeend",prow(null));var nr=$("pt").lastElementChild;nr.querySelector(".pn").focus();nr.scrollIntoView({block:"center",behavior:"smooth"});drawCF();return}
+ if(D.addsz){t.insertAdjacentHTML("beforebegin",srow("",""));mark(t.closest("tr"));return}
+ if(D.rmsz){var tr0=t.closest("tr"),sz=t.closest(".sz");sz.remove();if(!tr0.querySelector(".sz"))tr0.querySelector("[data-addsz]").insertAdjacentHTML("beforebegin",srow("",""));mark(tr0);return}
+ if(D.pdel){
+  var tr1=t.closest("tr");
+  if(D.arm!=="1"){D.arm="1";t.textContent="تأكيد الحذف";return}
+  if(!tr1.dataset.id){tr1.remove();mark(null);drawCF();return}
+  try{var r=await sb.from("products").delete().eq("id",+tr1.dataset.id).select();
+   if(r.error)throw r.error;
+   if(!r.data||!r.data.length)throw new Error("لا تملك صلاحية الحذف");
+   PRODUCTS=PRODUCTS.filter(function(p){return p.id!=tr1.dataset.id});tr1.remove();mark(null);drawCF();msg("تم الحذف.")
+  }catch(x){msg("تعذر الحذف: "+((x&&x.message)||x),1)}
   return}
- if(t.dataset.ss){
+ if(D.psave){await saveProducts(t);return}
+ if(D.ss){
   var S={fb:$("sfb").value.trim(),ig:$("sig").value.trim(),tt:$("stt").value.trim()};
-  try{var r2=await sb.from("settings").upsert({key:"social",value:S});
-   if(r2.error)throw r2.error;
-   SOC=S;msg("تم حفظ الروابط (تُقبل فقط روابط تبدأ بـ https://).")
-  }catch(x){msg("تعذر حفظ الروابط: "+((x&&x.message)||x),1)}
+  try{var r2=await sb.from("settings").upsert({key:"social",value:S});if(r2.error)throw r2.error;SOC=S;msg("تم حفظ الروابط.")}
+  catch(x){msg("تعذر حفظ الروابط: "+((x&&x.message)||x),1)}
+  return}
+ if(D.sapp){
+  var A={track:$("atrk").checked};
+  try{var r5=await sb.from("settings").upsert({key:"app",value:A});if(r5.error)throw r5.error;APP=A;msg("تم حفظ إعدادات الخصوصية.")}
+  catch(x){msg("تعذر الحفظ: "+((x&&x.message)||x),1)}
+  return}
+ if(D.spw){
+  var a1=$("pw1").value,a2=$("pw2").value;
+  if(a1.length<8){msg("كلمة المرور يجب ألا تقل عن 8 أحرف.",1);return}
+  if(a1!==a2){msg("كلمتا المرور غير متطابقتين.",1);return}
+  try{var rp=await sb.auth.updateUser({password:a1});if(rp.error)throw rp.error;$("pw1").value="";$("pw2").value="";msg("تم تغيير كلمة المرور.")}
+  catch(x){msg("تعذر تغيير كلمة المرور: "+((x&&x.message)||x),1)}
+  return}
+ if(D.sts){
+  var Sv=readStyle();
+  try{var r3=await sb.from("settings").upsert({key:"style",value:Sv});if(r3.error)throw r3.error;STY=Sv;msg("تم حفظ المظهر.")}
+  catch(x){msg("تعذر حفظ المظهر: "+((x&&x.message)||x),1)}
+  return}
+ if(D.str){
+  try{var r4=await sb.from("settings").upsert({key:"style",value:{}});if(r4.error)throw r4.error;
+   STY=null;applyStyle(null);
+   var ids={sfs:"fs",sbg:"bg",scd:"card",sin:"ink",shd:"head",sgr:"green",sgo:"gold",shr:"hdr"};
+   for(var id in ids)$(id).value=DEF_STY[ids[id]];$("sfv").textContent=DEF_STY.fs;msg("أُعيد المظهر الافتراضي.")}
+  catch(x){msg("تعذر إعادة الضبط: "+((x&&x.message)||x),1)}
  }
 });
 
-// معالجة الصورة: تصغير ثم رفع عند الحفظ
-document.addEventListener("change",function(e){if(e.target.id!="ff")return;var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,900/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);pend=c.toDataURL("image/jpeg",.82);c.toBlob(function(b){pendBlob=b},"image/jpeg",.82);$("fp").src=pend;$("fp").hidden=false};im.src=r.result};r.readAsDataURL(f)});
+function onEdit(e){var t=e.target;
+ if(t.dataset&&t.dataset.sty){var v=readStyle();$("sfv").textContent=v.fs;applyStyle(v);return}
+ if(t.closest&&t.closest("#pkw")){PKDIRTY=true;return}
+ var tr=t.closest&&t.closest("#pt tr");if(tr){mark(tr);if(t.classList.contains("pc"))drawCF()}}
+document.addEventListener("input",onEdit);
+document.addEventListener("change",function(e){
+ var t=e.target;
+ if(t.id==="xf"){importXl(t);return}
+ if(t.classList&&t.classList.contains("pf")){
+  var f=t.files[0],tr=t.closest("tr");if(!f)return;
+  resizeImg(f,function(d,b){tr._blob=b;var im=tr.querySelector(".th");im.src=d;im.hidden=false;mark(tr)});return}
+ if(t.classList&&t.classList.contains("pkf")){var f2=t.files[0],c2=t.closest(".pk");if(!f2)return;resizeImg(f2,function(d,b){c2._blob=b;var im2=c2.querySelector(".pkth");im2.src=d;im2.hidden=false;c2.querySelector(".pkph").hidden=true;PKDIRTY=true});return}
+ if(t.classList&&t.classList.contains("pcs")){var tr3=t.closest("tr"),inp=tr3.querySelector(".pc");if(t.value==="__o"){inp.hidden=false;inp.value="";inp.focus()}else{inp.hidden=true;inp.value=t.value}mark(tr3);drawCF();return}
+ onEdit(e)});
 
 (async function(){
  if(!sb){$("app").innerHTML='<p>تعذر الاتصال بقاعدة البيانات.</p>';return}
